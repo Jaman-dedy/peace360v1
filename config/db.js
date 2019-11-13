@@ -1,8 +1,11 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 import config from "config";
+import "dotenv/config";
 
-const db = config.get("mongoURI");
-
+const db =
+  process.env.NODE_ENV === "production"
+    ? process.env.MONGODB_URI
+    : config.get("mongoURI");
 const connectDB = async () => {
   try {
     await mongoose.connect(db, {
@@ -13,8 +16,6 @@ const connectDB = async () => {
     });
   } catch (err) {
     throw err.message;
-    //Exit process with failure
-    process.exit(1);
   }
 };
 
