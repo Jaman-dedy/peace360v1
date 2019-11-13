@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --require babel-register index.js"
+    "dev": "NODE_ENV=development nodemon --require babel-register index.js"
   },
   "keywords": [
     "nodejs",
@@ -21,6 +21,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "config": "^3.2.2",
+    "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.1.1",
     "gravatar": "^1.8.0",
@@ -30,9 +31,9 @@
     "nodemailer": "^6.3.1",
     "passport-jwt": "^4.0.0",
     "validator": "^11.1.0"
+    
   },
   "devDependencies": {
-    "dotenv": "^8.0.0",
     "nodemon": "^1.19.1"
   }
 }
