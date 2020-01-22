@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
+  // name: {
+  //   type: String,
+  //   required: true
+  // },
   email: {
     type: String,
     required: true,
@@ -17,18 +17,18 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String
   },
-  country: {
-    type: String,
-    required: true
-  },
-  organisation: {
-    type: String,
-    required: true
-  },
-  category: {
-    type: String,
-    required: true
-  },
+  // country: {
+  //   type: String,
+  //   required: true
+  // },
+  // organisation: {
+  //   type: String,
+  //   required: true
+  // },
+  // category: {
+  //   type: String,
+  //   required: true
+  // },
   isAdmin: {
     type: Boolean,
     default: false
@@ -39,4 +39,4 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model('User', UserSchema);

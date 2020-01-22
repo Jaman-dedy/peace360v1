@@ -14,13 +14,13 @@ class UserController {
       return res.status(400).json({ errors: errors.array() });
     }
     const {
-      name,
+      // name,
       email,
       password,
-      country,
-      organisation,
-      category,
-      isAdmin
+      // country,
+      // organisation,
+      // category,
+      // isAdmin
     } = req.body;
 
     const avatar = gravatar.url(email, {
@@ -29,14 +29,14 @@ class UserController {
       d: "mm"
     });
     let user = new User({
-      name,
+      // name,
       email,
       avatar,
       password,
-      country,
-      organisation,
-      category,
-      isAdmin
+      // country,
+      // organisation,
+      // category,
+      // isAdmin
     });
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
@@ -45,7 +45,6 @@ class UserController {
     const payload = {
       user: {
         id: user.id,
-        name: user.name,
         avatar: user.avatar
       }
     };
