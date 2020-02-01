@@ -1,5 +1,4 @@
 {
-    "mongoURI": "mongodb://jaman:emabush2015@localhost:27017/peace360" ,
-    "jwtSecret": "peace360"
+  "mongoURI": "mongodb://jaman:emabush2015@localhost:27017/peace360",
+  "jwtSecret": "peace360"
 }
-

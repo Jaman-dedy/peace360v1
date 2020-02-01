@@ -1,11 +1,11 @@
-import { validationResult } from "express-validator";
-import gravatar from "gravatar";
-import bcrypt from "bcryptjs";
-import generateToken from "../helpers/generateToken";
-import User from "../models/User";
-import sendEmail from "../helpers/sendEmail/callMailer";
-import jwt from "jsonwebtoken";
-import config from "config";
+import { validationResult } from 'express-validator';
+import gravatar from 'gravatar';
+import bcrypt from 'bcryptjs';
+import generateToken from '../helpers/generateToken';
+import User from '../models/User';
+import sendEmail from '../helpers/sendEmail/callMailer';
+import jwt from 'jsonwebtoken';
+import config from 'config';
 
 class UserController {
   async signup(req, res) {
@@ -16,41 +16,44 @@ class UserController {
     const {
       // name,
       email,
-      password,
+      password
       // country,
       // organisation,
       // category,
       // isAdmin
     } = req.body;
+    try {
+      const avatar = gravatar.url(email, {
+        s: 200,
+        r: 'pg',
+        d: 'mm'
+      });
+      let user = new User({
+        // name,
+        email,
+        avatar,
+        password
+        // country,
+        // organisation,
+        // category,
+        // isAdmin
+      });
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
 
-    const avatar = gravatar.url(email, {
-      s: 200,
-      r: "pg",
-      d: "mm"
-    });
-    let user = new User({
-      // name,
-      email,
-      avatar,
-      password,
-      // country,
-      // organisation,
-      // category,
-      // isAdmin
-    });
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
-
-    await user.save();
-    const payload = {
-      user: {
-        id: user.id,
-        avatar: user.avatar
-      }
-    };
-    const registeredUser = await User.findById(user.id).select("-password");
-    const token = generateToken(payload);
-    res.status(201).json({ status: 201, registeredUser, token });
+      await user.save();
+      const payload = {
+        user: {
+          id: user.id,
+          avatar: user.avatar
+        }
+      };
+      const registeredUser = await User.findById(user.id).select('-password');
+      const token = generateToken(payload);
+      res.status(201).json({ status: 201, registeredUser, token });
+    } catch (err) {
+      res.status(500).json({ status: 201, err });
+    }
   }
   async login(req, res) {
     const errors = validationResult(req);
@@ -78,7 +81,7 @@ class UserController {
       if (!user) {
         return res.status(404).json({
           status: 404,
-          msg: "No user found with that email address"
+          msg: 'No user found with that email address'
         });
       }
       const payload = {
@@ -86,8 +89,8 @@ class UserController {
       };
       const token = generateToken(payload);
       req.body.token = token;
-      req.body.template = "resetPassword";
-      const response = await sendEmail(user.email, token, "resetPassword");
+      req.body.template = 'resetPassword';
+      const response = await sendEmail(user.email, token, 'resetPassword');
       res.status(200).send({ status: 200, response });
     } catch (error) {
       res.status(500).json({
@@ -100,12 +103,12 @@ class UserController {
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(req.body.password, salt);
     const { token } = req.body;
-    const decoded = jwt.decode(token, config.get("jwtSecret"));
+    const decoded = jwt.decode(token, config.get('jwtSecret'));
     try {
       if (!decoded) {
         return res.status(401).json({
           status: 401,
-          error: "Invalid token"
+          error: 'Invalid token'
         });
       }
       const updatePwd = await User.findOneAndUpdate(
@@ -127,10 +130,10 @@ class UserController {
   }
   async getAuthenticatedUser(req, res) {
     try {
-      const user = await User.findById(req.user.id).select("-password");
+      const user = await User.findById(req.user.id).select('-password');
       res.status(200).json({ status: 200, user });
     } catch (error) {
-      res.status(500).json({ status: 500, msg: "server error" });
+      res.status(500).json({ status: 500, msg: 'server error' });
     }
   }
 }
