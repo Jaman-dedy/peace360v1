@@ -63,12 +63,18 @@ class ArticleController {
 
   async getAllArticle(req, res) {
     try {
+      const page = parseInt(req.query.page);
+      let displayed;
       const articles = await Article.find({ approved: true }).sort({
         date: -1
       });
+      const startIndex = (page - 1) * 5;
+      const endIndex = page * 5;
+      displayed = articles.slice(startIndex, endIndex);
       res.status(200).json({
         status: 200,
-        articles
+        displayed,
+        message: 'You successfully fetched the articles'
       });
     } catch (error) {
       res.status(500).json({
@@ -224,7 +230,6 @@ class ArticleController {
         liked
       });
     } catch (error) {
-      console.log('error', error);
       if (error.kind === 'ObjectId') {
         return res.status(404).json({
           status: 404,

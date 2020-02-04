@@ -1,5 +1,4 @@
 import Category from '../models/Category';
-import Article from '../models/Article';
 import statusCode from '../config/statusCode';
 import { updateCategoryHelper } from '../helpers/categoryHelper';
 
@@ -48,18 +47,33 @@ export default class CategoryController {
         });
   }
   static async getAllCategory(req, res) {
+    const page = parseInt(req.query.page);
+    let displayCategories;
+    let previousPage;
+    let nextPage;
+    const startIndex = (page - 1) * 3;
+    const endIndex = page * 3;
     const allCategories = await Category.find({});
-
-    if (allCategories.length === 0) {
-      res.status(statusCode.NOT_FOUND).json({
-        status: statusCode.NOT_FOUND,
-        message: 'No categories so far'
-      });
+    const pageNumber = Math.ceil(allCategories.length / 3);
+    if (page > 1) {
+      previousPage = page - 1;
     }
+    if (page < pageNumber) {
+      nextPage = page + 1;
+    }
+
+    displayCategories = allCategories.slice(startIndex, endIndex);
     res.status(statusCode.OK).json({
+      pageInfo: {
+        pageNumber,
+        previousPage,
+        currentPage: page,
+        nextPage,
+        limit: 3
+      },
       status: statusCode.OK,
       message: 'Categories are successfully fetched',
-      data: allCategories
+      data: displayCategories
     });
   }
   static async getOneCategory(req, res) {
