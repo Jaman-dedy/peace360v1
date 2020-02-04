@@ -1,6 +1,8 @@
-import { validationResult } from "express-validator";
-import Article from "../models/Article";
-import User from "../models/User";
+import { validationResult } from 'express-validator';
+import fs from 'fs';
+import Article from '../models/Article';
+import cloudinary from '../helpers/fileUpoadConfig/cloudinary';
+import User from '../models/User';
 
 class ArticleController {
   async createArticle(req, res) {
@@ -11,12 +13,22 @@ class ArticleController {
       });
     }
     try {
-      const user = await User.findById(req.user.id).select("-password");
+      const uploader = async path => await cloudinary.uploads(path, 'Images');
+      const urls = [];
+      const files = req.files ? req.files : [];
+      for (const file of files) {
+        const { path } = file;
+        const newPath = await uploader(path);
+        urls.push(newPath);
+        fs.unlinkSync(path);
+      }
+      const coverPhoto = files.length ? urls[0].url : undefined;
+      const inTextPhoto = files.length == 2 ? urls[1].url : undefined;
       const newArticle = new Article({
         text: req.body.text,
         tags: req.body.tags,
-        name: user.name,
-        avatar: user.avatar,
+        coverPhoto,
+        inTextPhoto,
         user: req.user.id
       });
 
@@ -72,7 +84,7 @@ class ArticleController {
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: "Item not found"
+          error: 'Item not found'
         });
       }
       res.status(200).json({
@@ -80,15 +92,15 @@ class ArticleController {
         article
       });
     } catch (err) {
-      if (err.kind === "ObjectId") {
+      if (err.kind === 'ObjectId') {
         return res.status(404).json({
           status: 404,
-          error: "Item not found"
+          error: 'Item not found'
         });
       }
       return res.status(500).json({
         status: 500,
-        error: "Server error"
+        error: 'Server error'
       });
     }
   }
@@ -104,13 +116,13 @@ class ArticleController {
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: "Item not found"
+          error: 'Item not found'
         });
       }
       if (article.user.toString() !== req.user.id) {
         return res.status(401).json({
           status: 401,
-          error: "Action denied"
+          error: 'Action denied'
         });
       }
       const updatedArticle = {
@@ -134,30 +146,30 @@ class ArticleController {
       if (article.user.toString() !== req.user.id) {
         return res.status(401).json({
           status: 401,
-          error: "Action denied"
+          error: 'Action denied'
         });
       }
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: "Item not found"
+          error: 'Item not found'
         });
       }
       await article.remove();
       return res.status(200).json({
         status: 200,
-        error: "Article removed"
+        error: 'Article removed'
       });
     } catch (err) {
-      if (err.kind === "ObjectId") {
+      if (err.kind === 'ObjectId') {
         return res.status(404).json({
           status: 404,
-          error: "Item not found"
+          error: 'Item not found'
         });
       }
       return res.status(500).json({
         status: 500,
-        error: "Server error"
+        error: 'Server error'
       });
     }
   }
@@ -178,7 +190,7 @@ class ArticleController {
         const disliked = article.likes;
         return res.status(200).json({
           status: 200,
-          message: "Article disliked",
+          message: 'Article disliked',
           disliked
         });
       }
@@ -192,15 +204,15 @@ class ArticleController {
       const liked = article.likes;
       return res.status(200).json({
         status: 200,
-        message: "Article liked",
+        message: 'Article liked',
         liked
       });
     } catch (error) {
-      console.log("error", error);
-      if (error.kind === "ObjectId") {
+      console.log('error', error);
+      if (error.kind === 'ObjectId') {
         return res.status(404).json({
           status: 404,
-          error: "Item not found"
+          error: 'Item not found'
         });
       }
       return res.status(500).json({
