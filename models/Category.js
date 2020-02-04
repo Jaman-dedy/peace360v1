@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+const Schema = mongoose.Schema;
+
 const CategorySchema = new mongoose.Schema({
   categoryTitle: {
     type: String,
@@ -8,7 +10,7 @@ const CategorySchema = new mongoose.Schema({
   description: {
     type: String
   },
-
+  articles: [],
   date: {
     type: Date,
     default: Date.now

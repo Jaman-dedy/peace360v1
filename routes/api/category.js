@@ -1,6 +1,9 @@
 import express from 'express';
 import Category from '../../controllers/category';
-import { checkCategoryExist } from '../../middlewares/categoryMiddleware';
+import {
+  checkCategoryExist,
+  checkCategoryNotExist
+} from '../../middlewares/categoryMiddleware';
 import isAuthenticated from '../../middlewares/auth';
 
 const router = express.Router();
@@ -11,7 +14,13 @@ router.post(
   checkCategoryExist,
   Category.createCategory
 );
-router.patch('/update/:categoryTitle', isAuthenticated, Category.editCategory);
+router.patch(
+  '/update/:categoryTitle',
+  isAuthenticated,
+  checkCategoryNotExist,
+  checkCategoryExist,
+  Category.editCategory
+);
 router.delete(
   '/delete/:categoryTitle',
   isAuthenticated,

@@ -1,5 +1,7 @@
 import Category from '../models/Category';
+import Article from '../models/Article';
 import statusCode from '../config/statusCode';
+import { updateCategoryHelper } from '../helpers/categoryHelper';
 
 export default class CategoryController {
   static async createCategory(req, res) {
@@ -13,24 +15,21 @@ export default class CategoryController {
     });
   }
   static async editCategory(req, res) {
-    const { categoryTitle, description } = req.body;
-    const updateCategory = await Category.findOneAndUpdate(
-      { categoryTitle: req.params.categoryTitle },
-      {
-        categoryTitle,
-        description
-      }
-    );
-    updateCategory
-      ? res.status(statusCode.OK).json({
-          status: statusCode.OK,
-          message: 'category updated successfully',
-          data: updateCategory
-        })
-      : res.status(statusCode.NOT_FOUND).json({
-          status: statusCode.NOT_FOUND,
-          errors: { message: "Category doesn't exist" }
-        });
+    const updateCategory = await updateCategoryHelper(req);
+    if (updateCategory) {
+      const findNewCategory = await Category.findOne({
+        _id: updateCategory._id
+      });
+      res.status(statusCode.OK).json({
+        status: statusCode.OK,
+        message: 'category updated successfully',
+        data: findNewCategory
+      });
+    }
+    res.status(statusCode.SERVER_ERROR).json({
+      status: statusCode.SERVER_ERROR,
+      message: error.message
+    });
   }
   static async deleteCategory(req, res) {
     const { categoryTitle } = req.params;
@@ -50,6 +49,7 @@ export default class CategoryController {
   }
   static async getAllCategory(req, res) {
     const allCategories = await Category.find({});
+
     if (allCategories.length === 0) {
       res.status(statusCode.NOT_FOUND).json({
         status: statusCode.NOT_FOUND,
