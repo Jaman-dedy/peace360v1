@@ -6,6 +6,19 @@ const ArticleSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
+  categoryId: {
+    type: Schema.Types.ObjectId,
+    ref: 'categories',
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  user: {
+    type: String,
+    required: true
+  },
   text: {
     type: String
   },
@@ -86,4 +99,4 @@ const ArticleSchema = new Schema({
 });
 
 ArticleSchema.index({ '$**': 'text' });
-export default mongoose.model('post', ArticleSchema);
+export default mongoose.model('Article', ArticleSchema);

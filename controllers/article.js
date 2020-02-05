@@ -3,6 +3,7 @@ import fs from 'fs';
 import Article from '../models/Article';
 import cloudinary from '../helpers/fileUpoadConfig/cloudinary';
 import User from '../models/User';
+import Category from '../models/Category';
 
 class ArticleController {
   async createArticle(req, res) {
@@ -24,18 +25,33 @@ class ArticleController {
       }
       const coverPhoto = files.length ? urls[0].url : undefined;
       const inTextPhoto = files.length == 2 ? urls[1].url : undefined;
+      const user = await User.findById(req.user.id).select('-password');
       const newArticle = new Article({
         text: req.body.text,
+        categoryId: req.body.categoryId,
+        title: req.body.title,
         tags: req.body.tags,
         coverPhoto,
         inTextPhoto,
-        user: req.user.id
+        user: user.id
       });
 
+      const category = await Category.findOne({ _id: newArticle.categoryId });
+      if (!category) {
+        res.status(404).json({
+          status: 404,
+          errors: {
+            message: 'Category does not exist'
+          }
+        });
+      }
       const article = await newArticle.save();
+      category.articles.push(newArticle);
+      category.save();
       res.status(201).json({
         status: 201,
-        article
+        data: article,
+        message: 'You successfully created an article'
       });
     } catch (err) {
       res.status(500).json({

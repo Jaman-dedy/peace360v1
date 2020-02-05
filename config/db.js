@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
-import config from "config";
-import "dotenv/config";
-
+import mongoose from 'mongoose';
+import 'dotenv/config';
 const db =
-  process.env.NODE_ENV === "production"
-    ? process.env.MONGODB_URI
-    : config.get("mongoURI");
+  process.env.NODE_ENV === 'development'
+    ? process.env.MONGO_URI_DEV
+    : process.env.NODE_ENV === 'test'
+    ? process.env.MONGO_URI_TEST
+    : process.env.MONGODB_URI;
 const connectDB = async () => {
   try {
     await mongoose.connect(db, {
@@ -14,9 +14,6 @@ const connectDB = async () => {
       useFindAndModify: false,
       useUnifiedTopology: true
     });
-  } catch (err) {
-    throw err.message;
-  }
+  } catch (err) {}
 };
-
 export default connectDB;

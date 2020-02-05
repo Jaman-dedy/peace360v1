@@ -5,6 +5,7 @@ import profile from './api/profile';
 import article from './api/article';
 import comment from './api/comment';
 import search from './api/search';
+import category from './api/category';
 
 // @ initialize app
 
@@ -18,5 +19,6 @@ app.use('/api/profile', profile);
 app.use('/api/article', article);
 app.use('/api/comment', comment);
 app.use('/api/search', search);
+app.use('/api/category', category);
 
 export default app;
