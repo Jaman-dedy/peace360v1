@@ -1,7 +1,7 @@
 import passport from 'passport';
 import express from 'express';
 import User from '../../controllers/users';
-import authentication from '../../middleware/socialAuth/authentication';
+import authentication from '../../middlewares/socialAuth/authentication';
 import asyncHandler from '../../helpers/errorsHandler/asyncHandler';
 
 const socialAuthStrategy = new authentication();
