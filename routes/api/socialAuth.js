@@ -2,7 +2,6 @@ import passport from 'passport';
 import express from 'express';
 import User from '../../controllers/users';
 import authentication from '../../middlewares/socialAuth/authentication';
-import asyncHandler from '../../helpers/errorsHandler/asyncHandler';
 
 const socialAuthStrategy = new authentication();
 
@@ -18,7 +17,7 @@ router.get(
     session: false,
     failureRedirect: '/facebook'
   }),
-  asyncHandler(user.loginViaSocialMedia)
+  user.loginViaSocialMedia
 );
 
 router.get(
@@ -28,7 +27,7 @@ router.get(
 router.get(
   '/login/google/redirect',
   passport.authenticate('google', { session: false }),
-  asyncHandler(user.loginViaSocialMedia)
+  user.loginViaSocialMedia
 );
 
 export default router;
