@@ -1,3 +1,4 @@
+import passport from 'passport';
 import facebookStrategy from './passport-facebook';
 import googleStrategy from './passport-google';
 /**
