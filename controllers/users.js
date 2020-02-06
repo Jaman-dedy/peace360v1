@@ -158,7 +158,12 @@ class UserController {
       }
       newUser = new User(user);
       await newUser.save();
-      res.status(201).json({ status: 201, newUser });
+      const payload = {
+        id: newUser.id,
+        username: newUser.username
+      };
+      const token = generateToken(payload);
+      res.status(201).json({ status: 201, newUser, token });
     } catch (error) {
       res.status(500).json({ status: 500, error: error.message });
     }
