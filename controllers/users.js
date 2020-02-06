@@ -66,8 +66,7 @@ class UserController {
     const payload = {
       user: {
         id: user.id,
-        name: user.name,
-        avatar: user.avatar
+        username: user.username
       }
     };
 
@@ -150,7 +149,12 @@ class UserController {
           },
           { user }
         );
-        res.status(200).json({ status: 200, newUser });
+        const payload = {
+          id: newUser.id,
+          username: newUser.username
+        };
+        const token = generateToken(payload);
+        res.status(200).json({ status: 200, newUser, token });
       }
       newUser = new User(user);
       await newUser.save();
