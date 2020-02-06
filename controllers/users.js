@@ -14,7 +14,7 @@ class UserController {
       return res.status(400).json({ errors: errors.array() });
     }
     const {
-      // name,
+      username,
       email,
       password
       // country,
@@ -29,7 +29,7 @@ class UserController {
         d: 'mm'
       });
       let user = new User({
-        // name,
+        username,
         email,
         avatar,
         password
@@ -52,6 +52,7 @@ class UserController {
       const token = generateToken(payload);
       res.status(201).json({ status: 201, registeredUser, token });
     } catch (err) {
+      console.log('err', err);
       res.status(500).json({ status: 201, err });
     }
   }
@@ -134,6 +135,28 @@ class UserController {
       res.status(200).json({ status: 200, user });
     } catch (error) {
       res.status(500).json({ status: 500, msg: 'server error' });
+    }
+  }
+  async loginSocialMedia(req, res) {
+    const user = {
+      username: req.user.username
+    };
+    try {
+      let newUser = await User.findOne({ username: req.user.username });
+      if (newUser) {
+        newUser = await User.findOneAndUpdate(
+          {
+            username: req.user.username
+          },
+          { user }
+        );
+        res.status(200).json({ status: 200, newUser });
+      }
+      newUser = new User(user);
+      await newUser.save();
+      res.status(201).json({ status: 201, newUser });
+    } catch (error) {
+      res.status(500).json({ status: 500, error: error.message });
     }
   }
 }

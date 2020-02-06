@@ -1,18 +1,18 @@
-import { validationResult } from "express-validator";
-import Profile from "../models/Profile";
-import Article from "../models/Article";
-import User from "../models/User";
+import { validationResult } from 'express-validator';
+import Profile from '../models/Profile';
+import Article from '../models/Article';
+import User from '../models/User';
 
 class ProfileController {
   async currentUserProfile(req, res) {
     try {
       const profile = await Profile.findOne({
         user: req.user.id
-      }).populate("user", ["name", "avatar"]);
+      }).populate('user', ['name', 'avatar']);
       if (!profile) {
         return res
           .status(400)
-          .json({ msg: "There is no profile for this user" });
+          .json({ msg: 'There is no profile for this user' });
       }
       return res.status(200).json({ status: 200, profile });
     } catch (error) {
@@ -23,11 +23,11 @@ class ProfileController {
     try {
       const profile = await Profile.findOne({
         user: req.params.userId
-      }).populate("user", ["name", "avatar"]);
+      }).populate('user', ['name', 'avatar']);
       if (!profile) {
         return res
           .status(400)
-          .json({ msg: "There is no profile for this user" });
+          .json({ msg: 'There is no profile for this user' });
       }
       return res.status(200).json({ status: 200, profile });
     } catch (error) {
@@ -59,7 +59,7 @@ class ProfileController {
     if (location) profileFields.location = location;
     if (bio) profileFields.bio = bio;
     if (skills) {
-      profileFields.skills = skills.split(",").map(skill => skill.trim());
+      profileFields.skills = skills.split(',').map(skill => skill.trim());
     }
     profileFields.social = {};
     if (youtube) profileFields.social.youtube = youtube;
@@ -85,7 +85,7 @@ class ProfileController {
       await profile.save();
       res.status(201).json({ status: 201, profile });
     } catch (error) {
-      res.status(500).json({ status: 500, msg: "server error" });
+      res.status(500).json({ status: 500, error: error.message });
     }
   }
 }
