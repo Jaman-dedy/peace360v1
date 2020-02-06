@@ -137,7 +137,7 @@ class UserController {
       res.status(500).json({ status: 500, msg: 'server error' });
     }
   }
-  async loginSocialMedia(req, res) {
+  async loginViaSocialMedia(req, res) {
     const user = {
       username: req.user.username
     };
