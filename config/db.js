@@ -6,6 +6,7 @@ const db =
     : process.env.NODE_ENV === 'test'
     ? process.env.MONGO_URI_TEST
     : process.env.MONGODB_URI;
+console.log('db', db);
 const connectDB = async () => {
   try {
     await mongoose.connect(db, {

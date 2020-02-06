@@ -1,4 +1,5 @@
 import express from 'express';
+import passport from 'passport';
 import cors from 'cors';
 import connectDB from './config/db';
 import router from './routes/app';
@@ -12,6 +13,8 @@ connectDB();
 //Init Middlware
 
 app.use(express.json({ extended: false }));
+
+app.use(passport.initialize());
 
 app.use(router);
 const port = process.env.PORT || 5000;
