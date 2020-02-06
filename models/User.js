@@ -8,12 +8,12 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true,
+    required: false,
     unique: true
   },
   password: {
     type: String,
-    required: true
+    required: false
   },
   avatar: {
     type: String
