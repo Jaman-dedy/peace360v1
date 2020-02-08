@@ -3,11 +3,21 @@ import Article from '../models/Article';
 import bcrypt from 'bcryptjs';
 
 const checkUser = async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { username, email, password } = req.body;
   try {
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
+      return res
+        .status(409)
+        .json({ errors: [{ message: 'User already exists' }] });
+    }
+    let checkUsername = await User.findOne({ username });
+    if (checkUsername) {
+      return res.status(409).json({
+        errors: [
+          { message: 'Username already taken, kindly provide a new one' }
+        ]
+      });
     }
     next();
   } catch (error) {
@@ -55,6 +65,5 @@ const checkUserFavoriteArticle = async (req, res, next) => {
     });
   }
 };
-
 
 export { checkUser, checkUserLogin, checkUserFavoriteArticle };
