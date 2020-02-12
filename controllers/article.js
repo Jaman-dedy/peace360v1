@@ -35,25 +35,15 @@ class ArticleController {
         inTextPhoto,
         user: user.id
       });
-
-      const category = await Category.findOne({ _id: newArticle.categoryId });
-      if (!category) {
-        res.status(404).json({
-          status: 404,
-          errors: {
-            message: 'Category does not exist'
-          }
-        });
-      }
       const article = await newArticle.save();
-      category.articles.push(newArticle);
-      category.save();
+
       res.status(201).json({
         status: 201,
         data: article,
         message: 'You successfully created an article'
       });
     } catch (err) {
+      console.log('err', err);
       res.status(500).json({
         status: 500,
         error: err

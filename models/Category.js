@@ -10,7 +10,6 @@ const CategorySchema = new mongoose.Schema({
   description: {
     type: String
   },
-  articles: [],
   date: {
     type: Date,
     default: Date.now
