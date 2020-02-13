@@ -1,4 +1,5 @@
 import Category from '../models/Category';
+
 import statusCode from '../config/statusCode';
 import { updateCategoryHelper } from '../helpers/categoryHelper';
 
@@ -53,7 +54,16 @@ export default class CategoryController {
     let nextPage;
     const startIndex = (page - 1) * 3;
     const endIndex = page * 3;
-    const allCategories = await Category.find({});
+    const allCategories = await Category.aggregate([
+      {
+        $lookup: {
+          from: 'articles',
+          localField: '_id',
+          foreignField: 'categoryId',
+          as: 'articles'
+        }
+      }
+    ]);
     const pageNumber = Math.ceil(allCategories.length / 3);
     if (page > 1) {
       previousPage = page - 1;
@@ -73,7 +83,7 @@ export default class CategoryController {
       },
       status: statusCode.OK,
       message: 'Categories are successfully fetched',
-      data: displayCategories
+      displayCategories
     });
   }
   static async getOneCategory(req, res) {
