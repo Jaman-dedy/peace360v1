@@ -64,20 +64,6 @@ export default class CategoryController {
         }
       }
     ]);
-
-    console.log('allCategories', allCategories);
-
-    // await Category.find({}).populate('articles', [
-    //   'text'
-    // ]);
-
-    // await category.aggregate.lookup({
-    //   from: 'articles',
-    //   localField: '_id',
-    //   foreignField: 'categoryId'
-    // });
-
-    console.log('allCategories', allCategories);
     const pageNumber = Math.ceil(allCategories.length / 3);
     if (page > 1) {
       previousPage = page - 1;
@@ -86,7 +72,7 @@ export default class CategoryController {
       nextPage = page + 1;
     }
 
-    // displayCategories = allCategories.slice(startIndex, endIndex);
+    displayCategories = allCategories.slice(startIndex, endIndex);
     res.status(statusCode.OK).json({
       pageInfo: {
         pageNumber,
@@ -97,7 +83,7 @@ export default class CategoryController {
       },
       status: statusCode.OK,
       message: 'Categories are successfully fetched',
-      allCategories
+      displayCategories
     });
   }
   static async getOneCategory(req, res) {
