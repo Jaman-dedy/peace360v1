@@ -1,4 +1,6 @@
 import Category from '../models/Category';
+import Article from '../models/Article';
+import User from '../models/User';
 
 import statusCode from '../config/statusCode';
 import { updateCategoryHelper } from '../helpers/categoryHelper';
@@ -62,7 +64,8 @@ export default class CategoryController {
           foreignField: 'categoryId',
           as: 'articles'
         }
-      }
+      },
+      { $unwind: '$articles' }
     ]);
     const pageNumber = Math.ceil(allCategories.length / 3);
     if (page > 1) {

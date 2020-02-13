@@ -3,8 +3,10 @@ const Schema = mongoose.Schema;
 
 const ArticleSchema = new Schema({
   user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users'
+    id: String,
+    username: String,
+    email: String,
+    avatar: String
   },
   categoryId: {
     type: Schema.Types.ObjectId,
@@ -12,10 +14,6 @@ const ArticleSchema = new Schema({
     required: true
   },
   title: {
-    type: String,
-    required: true
-  },
-  user: {
     type: String,
     required: true
   },

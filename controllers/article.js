@@ -26,6 +26,7 @@ class ArticleController {
       const coverPhoto = files.length ? urls[0].url : undefined;
       const inTextPhoto = files.length == 2 ? urls[1].url : undefined;
       const user = await User.findById(req.user.id).select('-password');
+
       const newArticle = new Article({
         text: req.body.text,
         categoryId: req.body.categoryId,
@@ -33,7 +34,12 @@ class ArticleController {
         tags: req.body.tags,
         coverPhoto,
         inTextPhoto,
-        user: user.id
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          avatar: user.avatar
+        }
       });
       const article = await newArticle.save();
 
@@ -55,9 +61,12 @@ class ArticleController {
     try {
       const page = parseInt(req.query.page);
       let displayed;
-      const articles = await Article.find({ approved: true }).sort({
-        date: -1
-      });
+      const articles = await Article.find({ approved: true })
+        .populate('users', ['name', 'avatar'])
+        .sort({
+          date: -1
+        });
+
       const startIndex = (page - 1) * 5;
       const endIndex = page * 5;
       displayed = articles.slice(startIndex, endIndex);
@@ -75,9 +84,11 @@ class ArticleController {
   }
   async getArticles(req, res) {
     try {
-      const articles = await Article.find().sort({
-        date: -1
-      });
+      const articles = await Article.find()
+        .sort({
+          date: -1
+        })
+        .populate('user', ['name', 'avatar']);
       res.status(200).json({
         status: 200,
         articles
