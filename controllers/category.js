@@ -49,7 +49,7 @@ export default class CategoryController {
   }
   static async getAllCategory(req, res) {
     const page = parseInt(req.query.page);
-    let displayCategories;
+    let categories;
     let previousPage;
     let nextPage;
     const startIndex = (page - 1) * 3;
@@ -72,7 +72,7 @@ export default class CategoryController {
       nextPage = page + 1;
     }
 
-    displayCategories = allCategories.slice(startIndex, endIndex);
+    categories = allCategories.slice(startIndex, endIndex);
     res.status(statusCode.OK).json({
       pageInfo: {
         pageNumber,
@@ -83,7 +83,7 @@ export default class CategoryController {
       },
       status: statusCode.OK,
       message: 'Categories are successfully fetched',
-      displayCategories
+      categories
     });
   }
   static async getOneCategory(req, res) {

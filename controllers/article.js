@@ -26,6 +26,7 @@ class ArticleController {
       const coverPhoto = files.length ? urls[0].url : undefined;
       const inTextPhoto = files.length == 2 ? urls[1].url : undefined;
       const user = await User.findById(req.user.id).select('-password');
+      console.log('user', user);
       const newArticle = new Article({
         text: req.body.text,
         categoryId: req.body.categoryId,
