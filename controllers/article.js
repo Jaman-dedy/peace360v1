@@ -16,7 +16,7 @@ class ArticleController {
     try {
       const uploader = async path => await cloudinary.uploads(path, 'Images');
       const urls = [];
-      const files = req.files ? req.files : [];
+      const files = req.files.length ? req.files : [];
       for (const file of files) {
         const { path } = file;
         const newPath = await uploader(path);
@@ -26,7 +26,6 @@ class ArticleController {
       const coverPhoto = files.length ? urls[0].url : undefined;
       const inTextPhoto = files.length == 2 ? urls[1].url : undefined;
       const user = await User.findById(req.user.id).select('-password');
-      console.log('user', user);
       const newArticle = new Article({
         text: req.body.text,
         categoryId: req.body.categoryId,
@@ -34,7 +33,12 @@ class ArticleController {
         tags: req.body.tags,
         coverPhoto,
         inTextPhoto,
-        user: user.id
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          avatar: user.avatar
+        }
       });
       const article = await newArticle.save();
 
@@ -44,7 +48,6 @@ class ArticleController {
         message: 'You successfully created an article'
       });
     } catch (err) {
-      console.log('err', err);
       res.status(500).json({
         status: 500,
         error: err

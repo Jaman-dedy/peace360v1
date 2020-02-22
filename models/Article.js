@@ -2,10 +2,6 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const ArticleSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users'
-  },
   categoryId: {
     type: Schema.Types.ObjectId,
     ref: 'categories',
@@ -16,8 +12,10 @@ const ArticleSchema = new Schema({
     required: true
   },
   user: {
-    type: String,
-    required: true
+    id: String,
+    username: String,
+    email: String,
+    avatar: String
   },
   text: {
     type: String
