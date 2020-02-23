@@ -1,5 +1,5 @@
 import { validationResult } from 'express-validator';
-import fs from 'fs';
+import fs, { read } from 'fs';
 import Article from '../models/Article';
 import cloudinary from '../helpers/fileUpoadConfig/cloudinary';
 import User from '../models/User';
@@ -30,6 +30,7 @@ class ArticleController {
         text: req.body.text,
         categoryId: req.body.categoryId,
         title: req.body.title,
+        subTitle: req.body.subTitle,
         tags: req.body.tags,
         coverPhoto,
         inTextPhoto,
@@ -48,6 +49,7 @@ class ArticleController {
         message: 'You successfully created an article'
       });
     } catch (err) {
+      console.log('err', err);
       res.status(500).json({
         status: 500,
         error: err

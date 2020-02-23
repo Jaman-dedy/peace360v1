@@ -11,6 +11,9 @@ const ArticleSchema = new Schema({
     type: String,
     required: true
   },
+  subTitle: {
+    type: String
+  },
   user: {
     id: String,
     username: String,
