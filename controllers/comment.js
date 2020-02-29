@@ -16,7 +16,7 @@ class CommentController {
       const article = await Article.findById(req.params.article_id);
       const newComment = {
         text: req.body.text,
-        name: user.name,
+        name: user.username,
         avatar: user.avatar,
         user: req.user.id
       };
