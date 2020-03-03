@@ -27,5 +27,6 @@ router.delete(
   Category.deleteCategory
 );
 router.get('/getAll', Category.getAllCategory);
+router.get('/getAllCategories', Category.getAllCategories);
 router.get('/getOne/:categoryTitle', Category.getOneCategory);
 export default router;

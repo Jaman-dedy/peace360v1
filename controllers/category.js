@@ -86,6 +86,22 @@ export default class CategoryController {
       categories
     });
   }
+
+  static async getAllCategories(req, res) {
+    const allCategories = await Category.find({});
+
+    if (allCategories.length === 0) {
+      res.status(statusCode.NOT_FOUND).json({
+        status: statusCode.NOT_FOUND,
+        message: 'No categories so far'
+      });
+    }
+    res.status(statusCode.OK).json({
+      status: statusCode.OK,
+      message: 'Categories are successfully fetched',
+      data: allCategories
+    });
+  }
   static async getOneCategory(req, res) {
     const { categoryTitle } = req.params;
     const category = await Category.findOne({ categoryTitle });
