@@ -16,7 +16,7 @@ class ArticleController {
     try {
       const uploader = async path => await cloudinary.uploads(path, 'Images');
       const urls = [];
-      const files = req.files.length ? req.files : [];
+      const files = req.files ? req.files : [];
       for (const file of files) {
         const { path } = file;
         const newPath = await uploader(path);
