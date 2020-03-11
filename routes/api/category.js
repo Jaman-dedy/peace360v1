@@ -18,6 +18,7 @@ router.post(
 router.patch(
   '/update/:title',
   isAuthenticated,
+  checkCategoryNotExist,
   updateCategoryMiddleware,
   Category.editCategory
 );
