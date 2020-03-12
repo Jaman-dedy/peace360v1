@@ -2,7 +2,8 @@ import express from 'express';
 import Category from '../../controllers/category';
 import {
   checkCategoryExist,
-  checkCategoryNotExist
+  checkCategoryNotExist,
+  updateCategoryMiddleware
 } from '../../middlewares/categoryMiddleware';
 import isAuthenticated from '../../middlewares/auth';
 
@@ -15,10 +16,10 @@ router.post(
   Category.createCategory
 );
 router.patch(
-  '/update/:categoryTitle',
+  '/update/:title',
   isAuthenticated,
   checkCategoryNotExist,
-  checkCategoryExist,
+  updateCategoryMiddleware,
   Category.editCategory
 );
 router.delete(
@@ -27,5 +28,6 @@ router.delete(
   Category.deleteCategory
 );
 router.get('/getAll', Category.getAllCategory);
+router.get('/getAllCategories', Category.getAllCategories);
 router.get('/getOne/:categoryTitle', Category.getOneCategory);
 export default router;

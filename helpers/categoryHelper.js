@@ -3,11 +3,11 @@ const updateCategoryHelper = async req => {
   try {
     const { categoryTitle, description } = req.body;
     const findCategory = await Category.findOne({
-      categoryTitle: req.params.categoryTitle
+      categoryTitle: req.params.title
     });
 
     const updateCategory = await Category.findOneAndUpdate(
-      { categoryTitle: req.params.categoryTitle },
+      { categoryTitle: req.params.title },
       {
         categoryTitle: categoryTitle
           ? categoryTitle
