@@ -19,14 +19,16 @@ const checkCategoryExist = async (req, res, next) => {
   }
 };
 const checkCategoryNotExist = async (req, res, next) => {
-  const { categoryTitle } = req.params;
   try {
-    let findCategory = await Category.findOne({ categoryTitle: categoryTitle });
-    !findCategory
-      ? res.status(statusCode.EXIST).json({
-          errors: [{ message: 'Category does not exist' }]
-        })
-      : next();
+    let findCategory = await Category.findOne({
+      categoryTitle: req.params.title
+    });
+    if (!findCategory) {
+      res.status(statusCode.EXIST).json({
+        errors: [{ message: 'Category does not exist' }]
+      });
+    }
+     next();
   } catch (error) {
     res.status(statusCode.SERVER_ERROR).json({
       status: statusCode.SERVER_ERROR,
@@ -38,21 +40,13 @@ const updateCategoryMiddleware = async (req, res, next) => {
   const { categoryTitle } = req.body;
   const { title } = req.params;
   try {
-    let findCategory = await Category.findOne({ categoryTitle: title });
-
-    if (!findCategory) {
+    const categoryExist = await Category.findOne({ categoryTitle });
+    if (categoryExist && title !== categoryTitle) {
       res.status(statusCode.EXIST).json({
-        errors: [{ message: 'Category does not exist' }]
+        errors: [{ message: 'Category already exists' }]
       });
-    } else {
-      if (categoryTitle === findCategory.categoryTitle) {
-        next();
-      } else {
-        res.status(statusCode.EXIST).json({
-          errors: [{ message: 'Category title already exist' }]
-        });
-      }
     }
+    next();
   } catch (error) {
     res.status(statusCode.SERVER_ERROR).json({
       status: statusCode.SERVER_ERROR,
