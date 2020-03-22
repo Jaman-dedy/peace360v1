@@ -78,14 +78,14 @@ class ProfileController {
           { $set: profileFields },
           { new: true }
         );
-        res.status(200).json({ status: 200, profile });
+        return res.status(200).json({ status: 200, profile });
       }
       // create
       profile = new Profile(profileFields);
       await profile.save();
-      res.status(201).json({ status: 201, profile });
+      return res.status(201).json({ status: 201, profile });
     } catch (error) {
-      res.status(500).json({ status: 500, error: error.message });
+      return res.status(500).json({ status: 500, error: error.message });
     }
   }
 }
