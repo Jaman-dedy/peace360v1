@@ -6,18 +6,22 @@ class FollowerController {
   async followUser(req, res) {
     try {
       const currentArticle = await Article.findById(req.params.article_id);
+
       const user = currentArticle.user;
-      const userToFollow = await User.findById(user);
+      const userToFollow = await User.findById(user.id);
+
       const followers = new Followers();
       const follower = await Followers.find();
+
       const followedBy = {
         user: req.user.id,
-        name: req.user.name,
+        username: req.user.username,
         avatar: req.user.avatar
       };
+
       const followedUser = {
         user,
-        name: userToFollow.name,
+        username: userToFollow.username,
         avatar: userToFollow.avatar
       };
       if (user == req.user.id) {
@@ -29,30 +33,34 @@ class FollowerController {
 
       const myFollowings = follower.filter(follower =>
         follower.followedBy.find(
-          followedBy => followedBy.user.toString() === req.user.id
+          followedBy => followedBy._id.toString() === req.user.id
         )
       );
+
       if (myFollowings.length) {
         const unFollowUser = myFollowings.find(following =>
           following.followedUser.find(
-            unFollow => unFollow.user.toString() == user
+            unFollow => unFollow._id.toString() == user
           )
         );
+
         if (unFollowUser) {
           await Followers.findByIdAndDelete(unFollowUser.id);
           return res.status(200).json({
             status: 200,
-            msg: `You have successfully unfollow ${followedUser.name}`
+            msg: `You have successfully unfollow ${followedUser.username}`
           });
         }
       }
 
       followers.followedBy.unshift(followedBy);
-      followers.followedUser.unshift(followedUser);
+      followers.followedUser.unshift(followedUser.user);
+
       await followers.save();
+
       res.status(201).json({
         status: 201,
-        msg: `Thanks for following ${followedUser.name}`
+        msg: `Thanks for following ${followedUser.username}`
       });
     } catch (error) {
       return res.status(500).json({
@@ -67,7 +75,7 @@ class FollowerController {
 
       const followersList = followers.filter(follower =>
         follower.followedUser.find(
-          followedUser => followedUser.user.toString() === req.user.id
+          followedUser => followedUser._id.toString() === req.user.id
         )
       );
       if (!followersList.length) {
@@ -94,7 +102,7 @@ class FollowerController {
 
       const followingsList = followers.filter(following =>
         following.followedBy.find(
-          followedBy => followedBy.user.toString() === req.user.id
+          followedBy => followedBy._id.toString() === req.user.id
         )
       );
       if (!followingsList.length) {
