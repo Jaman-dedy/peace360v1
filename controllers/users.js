@@ -45,6 +45,7 @@ class UserController {
       const payload = {
         user: {
           id: user.id,
+          username: user.username,
           avatar: user.avatar
         }
       };
@@ -52,7 +53,6 @@ class UserController {
       const token = generateToken(payload);
       res.status(201).json({ status: 201, registeredUser, token });
     } catch (err) {
-      console.log('err', err);
       res.status(500).json({ status: 201, err });
     }
   }
@@ -63,10 +63,12 @@ class UserController {
     }
     const { email, password } = req.body;
     let user = await User.findOne({ email });
+
     const payload = {
       user: {
         id: user.id,
-        username: user.username
+        username: user.username,
+        avatar: user.avatar
       }
     };
 
