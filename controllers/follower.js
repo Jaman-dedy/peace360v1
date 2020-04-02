@@ -24,7 +24,7 @@ class FollowerController {
         username: userToFollow.username,
         avatar: userToFollow.avatar
       };
-      if (user == req.user.id) {
+      if (user.id == req.user.id) {
         return res.status(401).json({
           status: 401,
           msg: 'unauthorized action, you can not follow yourself'
@@ -33,14 +33,14 @@ class FollowerController {
 
       const myFollowings = follower.filter(follower =>
         follower.followedBy.find(
-          followedBy => followedBy._id.toString() === req.user.id
+          followedBy => followedBy.user.toString() === req.user.id
         )
       );
 
       if (myFollowings.length) {
         const unFollowUser = myFollowings.find(following =>
           following.followedUser.find(
-            unFollow => unFollow._id.toString() == user
+            unFollow => unFollow.username === user.username
           )
         );
 
@@ -102,7 +102,7 @@ class FollowerController {
 
       const followingsList = followers.filter(following =>
         following.followedBy.find(
-          followedBy => followedBy._id.toString() === req.user.id
+          followedBy => followedBy.user.toString() === req.user.id
         )
       );
       if (!followingsList.length) {
