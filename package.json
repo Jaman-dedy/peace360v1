@@ -40,6 +40,7 @@
     "validator": "^11.1.0"
   },
   "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "nodemon": "^1.19.1"
   }
 }

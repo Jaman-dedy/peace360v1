@@ -16,31 +16,31 @@ class FollowerController {
       const followedBy = {
         user: req.user.id,
         username: req.user.username,
-        avatar: req.user.avatar
+        avatar: req.user.avatar,
       };
 
       const followedUser = {
         user,
         username: userToFollow.username,
-        avatar: userToFollow.avatar
+        avatar: userToFollow.avatar,
       };
       if (user.id == req.user.id) {
         return res.status(401).json({
           status: 401,
-          msg: 'unauthorized action, you can not follow yourself'
+          msg: 'unauthorized action, you can not follow yourself',
         });
       }
 
-      const myFollowings = follower.filter(follower =>
+      const myFollowings = follower.filter((follower) =>
         follower.followedBy.find(
-          followedBy => followedBy.user.toString() === req.user.id
+          (followedBy) => followedBy.user.toString() === req.user.id
         )
       );
 
       if (myFollowings.length) {
-        const unFollowUser = myFollowings.find(following =>
+        const unFollowUser = myFollowings.find((following) =>
           following.followedUser.find(
-            unFollow => unFollow.username === user.username
+            (unFollow) => unFollow.username === user.username
           )
         );
 
@@ -48,7 +48,7 @@ class FollowerController {
           await Followers.findByIdAndDelete(unFollowUser.id);
           return res.status(200).json({
             status: 200,
-            msg: `You have successfully unfollow ${followedUser.username}`
+            msg: `You have successfully unfollow ${followedUser.username}`,
           });
         }
       }
@@ -60,12 +60,12 @@ class FollowerController {
 
       res.status(201).json({
         status: 201,
-        msg: `Thanks for following ${followedUser.username}`
+        msg: `Thanks for following ${followedUser.username}`,
       });
     } catch (error) {
       return res.status(500).json({
         status: 500,
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -73,26 +73,37 @@ class FollowerController {
     try {
       const followers = await Followers.find();
 
-      const followersList = followers.filter(follower =>
-        follower.followedUser.find(
-          followedUser => followedUser._id.toString() === req.user.id
-        )
-      );
-      if (!followersList.length) {
+      const followersList = followers.filter((follower) => {
+        return follower.followedUser.find(
+          (followedUser) => followedUser._id.toString() === req.user.id
+        );
+      });
+      // if (!followersList.length) {
+      //   return res.status(404).json({
+      //     status: 404,
+      //     msg: 'Oops, you do not have any follower currently',
+      //   });
+      // }
+      const myFollowers = followers.map((followers) => {
+        return followers.followedBy.find((flw) => {
+          return flw;
+        });
+      });
+      if (!myFollowers.length) {
         return res.status(404).json({
           status: 404,
-          msg: 'Oops, you do not have any follower currently'
+          msg: 'Oops, you do not have any follower currently',
         });
       }
-      const myFollowers = followersList.map(followers => followers.followedBy);
+
       return res.status(200).json({
         status: 200,
-        myFollowers
+        myFollowers,
       });
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -100,28 +111,32 @@ class FollowerController {
     try {
       const followers = await Followers.find();
 
-      const followingsList = followers.filter(following =>
+      const followingsList = followers.filter((following) =>
         following.followedBy.find(
-          followedBy => followedBy.user.toString() === req.user.id
+          (followedBy) => followedBy.user.toString() === req.user.id
         )
       );
       if (!followingsList.length) {
         return res.status(404).json({
           status: 404,
-          msg: 'Oops, currently you are not following any user'
+          msg: 'Oops, currently you are not following any user',
         });
       }
-      const myFollowings = followingsList.map(
-        followings => followings.followedUser
-      );
+
+      const myFollowings = followingsList.map((followings) => {
+        return followings.followedUser.find((flw) => {
+          return flw;
+        });
+      });
+
       return res.status(200).json({
         status: 200,
-        myFollowings
+        myFollowings,
       });
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error.message
+        error: error.message,
       });
     }
   }
