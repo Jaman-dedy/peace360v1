@@ -6,30 +6,30 @@ const FollowerSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
       },
       username: {
-        type: String
+        type: String,
       },
       avatar: {
-        type: String
-      }
-    }
+        type: String,
+      },
+    },
   ],
   followedBy: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
       },
       username: {
-        type: String
+        type: String,
       },
       avatar: {
-        type: String
-      }
-    }
-  ]
+        type: String,
+      },
+    },
+  ],
 });
 
 export default mongoose.model('follower', FollowerSchema);
