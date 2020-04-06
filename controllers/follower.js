@@ -73,20 +73,29 @@ class FollowerController {
     try {
       const followers = await Followers.find();
 
-      const followersList = followers.filter((follower) =>
-        follower.followedUser.find(
+      const followersList = followers.filter((follower) => {
+        return follower.followedUser.find(
           (followedUser) => followedUser._id.toString() === req.user.id
-        )
-      );
-      if (!followersList.length) {
+        );
+      });
+      // if (!followersList.length) {
+      //   return res.status(404).json({
+      //     status: 404,
+      //     msg: 'Oops, you do not have any follower currently',
+      //   });
+      // }
+      const myFollowers = followers.map((followers) => {
+        return followers.followedBy.find((flw) => {
+          return flw;
+        });
+      });
+      if (!myFollowers.length) {
         return res.status(404).json({
           status: 404,
           msg: 'Oops, you do not have any follower currently',
         });
       }
-      const myFollowers = followersList.map(
-        (followers) => followers.followedBy
-      );
+
       return res.status(200).json({
         status: 200,
         myFollowers,
