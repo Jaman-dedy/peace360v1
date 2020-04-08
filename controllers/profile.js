@@ -72,13 +72,6 @@ class ProfileController {
     try {
       let profile = await Profile.findOne({ user: req.user.id });
       if (profile) {
-        // profile = await Profile.findOneAndUpdate(
-        //   {
-        //     user: req.user.id,
-        //   },
-        //   { $set: profileFields },
-        //   { new: true }
-        // );
         return res.status(404).json({
           data: {
             errors: {

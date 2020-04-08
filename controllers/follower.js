@@ -37,6 +37,8 @@ class FollowerController {
         )
       );
 
+      myFollowings;
+
       if (myFollowings.length) {
         const unFollowUser = myFollowings.find((following) =>
           following.followedUser.find(
@@ -49,6 +51,7 @@ class FollowerController {
           return res.status(200).json({
             status: 200,
             msg: `You have successfully unfollow ${followedUser.username}`,
+            user: followedUser.user,
           });
         }
       }
@@ -61,6 +64,7 @@ class FollowerController {
       res.status(201).json({
         status: 201,
         msg: `Thanks for following ${followedUser.username}`,
+        user: followedUser.user,
       });
     } catch (error) {
       return res.status(500).json({
@@ -78,12 +82,6 @@ class FollowerController {
           (followedUser) => followedUser._id.toString() === req.user.id
         );
       });
-      // if (!followersList.length) {
-      //   return res.status(404).json({
-      //     status: 404,
-      //     msg: 'Oops, you do not have any follower currently',
-      //   });
-      // }
       const myFollowers = followers.map((followers) => {
         return followers.followedBy.find((flw) => {
           return flw;
