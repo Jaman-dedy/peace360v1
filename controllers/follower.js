@@ -52,6 +52,7 @@ class FollowerController {
             status: 200,
             msg: `You have successfully unfollow ${followedUser.username}`,
             user: followedUser.user,
+            state: 'unfollow',
           });
         }
       }
@@ -65,6 +66,7 @@ class FollowerController {
         status: 201,
         msg: `Thanks for following ${followedUser.username}`,
         user: followedUser.user,
+        state: 'follow',
       });
     } catch (error) {
       return res.status(500).json({
