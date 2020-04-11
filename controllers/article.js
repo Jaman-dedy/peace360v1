@@ -10,11 +10,11 @@ class ArticleController {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        errors: errors.array()
+        errors: errors.array(),
       });
     }
     try {
-      const uploader = async path => await cloudinary.uploads(path, 'Images');
+      const uploader = async (path) => await cloudinary.uploads(path, 'Images');
       const urls = [];
       const files = req.files ? req.files : [];
       for (const file of files) {
@@ -38,21 +38,21 @@ class ArticleController {
           id: user._id,
           username: user.username,
           email: user.email,
-          avatar: user.avatar
-        }
+          avatar: user.avatar,
+        },
       });
       const article = await newArticle.save();
 
       res.status(201).json({
         status: 201,
         data: article,
-        message: 'You successfully created an article'
+        message: 'You successfully created an article',
       });
     } catch (err) {
       console.log('err', err);
       res.status(500).json({
         status: 500,
-        error: err
+        error: err,
       });
     }
   }
@@ -62,7 +62,7 @@ class ArticleController {
       const page = parseInt(req.query.page);
       let displayed;
       const articles = await Article.find({ approved: true }).sort({
-        date: -1
+        date: -1,
       });
       const startIndex = (page - 1) * 5;
       const endIndex = page * 5;
@@ -70,28 +70,28 @@ class ArticleController {
       res.status(200).json({
         status: 200,
         displayed,
-        message: 'You successfully fetched the articles'
+        message: 'You successfully fetched the articles',
       });
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error
+        error: error,
       });
     }
   }
   async getArticles(req, res) {
     try {
       const articles = await Article.find().sort({
-        date: -1
+        date: -1,
       });
       res.status(200).json({
         status: 200,
-        articles
+        articles,
       });
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error
+        error: error,
       });
     }
   }
@@ -102,23 +102,23 @@ class ArticleController {
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found'
+          error: 'Item not found',
         });
       }
       res.status(200).json({
         status: 200,
-        article
+        article,
       });
     } catch (err) {
       if (err.kind === 'ObjectId') {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found'
+          error: 'Item not found',
         });
       }
       return res.status(500).json({
         status: 500,
-        error: 'Server error'
+        error: 'Server error',
       });
     }
   }
@@ -126,7 +126,7 @@ class ArticleController {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        errors: errors.array()
+        errors: errors.array(),
       });
     }
     try {
@@ -134,17 +134,17 @@ class ArticleController {
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found'
+          error: 'Item not found',
         });
       }
       if (article.user.toString() !== req.user.id) {
         return res.status(401).json({
           status: 401,
-          error: 'Action denied'
+          error: 'Action denied',
         });
       }
       const updatedArticle = {
-        text: req.body.text
+        text: req.body.text,
       };
       const articleUpdated = await Article.findOneAndUpdate(
         { _id: req.params.article_id },
@@ -154,7 +154,7 @@ class ArticleController {
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error
+        error: error,
       });
     }
   }
@@ -164,30 +164,30 @@ class ArticleController {
       if (article.user.toString() !== req.user.id) {
         return res.status(401).json({
           status: 401,
-          error: 'Action denied'
+          error: 'Action denied',
         });
       }
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found'
+          error: 'Item not found',
         });
       }
       await article.remove();
       return res.status(200).json({
         status: 200,
-        error: 'Article removed'
+        error: 'Article removed',
       });
     } catch (err) {
       if (err.kind === 'ObjectId') {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found'
+          error: 'Item not found',
         });
       }
       return res.status(500).json({
         status: 500,
-        error: 'Server error'
+        error: 'Server error',
       });
     }
   }
@@ -197,11 +197,11 @@ class ArticleController {
       //check on the user who likes the current article
 
       if (
-        article.likes.filter(like => like.user.toString() === req.user.id)
+        article.likes.filter((like) => like.user.toString() === req.user.id)
           .length > 0
       ) {
         const removeIndex = article.likes
-          .map(like => like.user.toString())
+          .map((like) => like.user.toString())
           .indexOf(req.user.id);
         article.likes.splice(removeIndex, 1);
         await article.save();
@@ -209,13 +209,14 @@ class ArticleController {
         return res.status(200).json({
           status: 200,
           message: 'Article disliked',
-          disliked
+          state: 'dislike',
+          article,
         });
       }
       const newLike = {
         user: req.user.id,
-        name: req.user.name,
-        avatar: req.user.avatar
+        username: req.user.username,
+        avatar: req.user.avatar,
       };
       article.likes.unshift(newLike);
       await article.save();
@@ -223,18 +224,20 @@ class ArticleController {
       return res.status(200).json({
         status: 200,
         message: 'Article liked',
-        liked
+        state: 'like',
+        article,
+        liked,
       });
     } catch (error) {
       if (error.kind === 'ObjectId') {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found'
+          error: 'Item not found',
         });
       }
       return res.status(500).json({
         status: 500,
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -245,21 +248,22 @@ class ArticleController {
         user: req.user.id,
         name: req.user.name,
         avatar: req.user.avatar,
-        rate: req.body.rate
+        rate: req.body.rate,
       };
       if (
-        article.ratings.filter(rating => rating.user.toString() === req.user.id)
-          .length > 0
+        article.ratings.filter(
+          (rating) => rating.user.toString() === req.user.id
+        ).length > 0
       ) {
         const removeIndex = article.ratings
-          .map(rating => rating.user.toString())
+          .map((rating) => rating.user.toString())
           .indexOf(req.user.id);
         article.ratings.splice(removeIndex, 1, newRate);
         await article.save();
         const rating = article.ratings[0];
         return res.status(201).json({
           status: 201,
-          rating
+          rating,
         });
       }
       article.ratings.unshift(newRate);
@@ -267,12 +271,12 @@ class ArticleController {
       const rating = article.ratings[0];
       return res.status(201).json({
         status: 201,
-        rating
+        rating,
       });
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error
+        error: error,
       });
     }
   }
@@ -282,7 +286,7 @@ class ArticleController {
       const article = await Article.findById(req.params.article_id);
       approve = article.approved;
       const updateApproval = {
-        approved: !approve
+        approved: !approve,
       };
       const approveArticle = await Article.findOneAndUpdate(
         { _id: req.params.article_id },
@@ -293,7 +297,7 @@ class ArticleController {
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error
+        error: error,
       });
     }
   }
