@@ -5,98 +5,102 @@ const ArticleSchema = new Schema({
   categoryId: {
     type: Schema.Types.ObjectId,
     ref: 'categories',
-    required: true
+    required: true,
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   subTitle: {
-    type: String
+    type: String,
   },
   user: {
     id: String,
     username: String,
     email: String,
-    avatar: String
+    avatar: String,
   },
   text: {
-    type: String
+    type: String,
   },
   tags: [String],
   avatar: {
-    type: String
+    type: String,
   },
   coverPhoto: {
-    type: String
+    type: String,
   },
   inTextPhoto: {
-    type: String
+    type: String,
   },
   approved: {
     type: Boolean,
-    default: false
+    default: false,
   },
   likes: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
+      },
+      articleId: {
+        type: Schema.Types.ObjectId,
+        ref: 'articles',
       },
       name: {
-        type: String
+        type: String,
       },
       avatar: {
-        type: String
-      }
-    }
+        type: String,
+      },
+    },
   ],
   ratings: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
       },
       name: {
-        type: String
+        type: String,
       },
       avatar: {
-        type: String
+        type: String,
       },
       rate: {
-        type: Number
-      }
-    }
+        type: Number,
+      },
+    },
   ],
   comments: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
       },
       text: {
         type: String,
-        required: true
+        required: true,
       },
       name: {
-        type: String
+        type: String,
       },
       avatar: {
-        type: String
+        type: String,
       },
       image: {
-        type: String
+        type: String,
       },
       date: {
         type: Date,
-        default: Date.now
-      }
-    }
+        default: Date.now,
+      },
+    },
   ],
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 ArticleSchema.index({ '$**': 'text' });

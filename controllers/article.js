@@ -215,6 +215,7 @@ class ArticleController {
       }
       const newLike = {
         user: req.user.id,
+        articleId: req.params.article_id,
         username: req.user.username,
         avatar: req.user.avatar,
       };
