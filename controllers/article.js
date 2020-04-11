@@ -210,7 +210,6 @@ class ArticleController {
           status: 200,
           message: 'Article disliked',
           state: 'dislike',
-          article,
         });
       }
       const newLike = {
@@ -226,7 +225,6 @@ class ArticleController {
         status: 200,
         message: 'Article liked',
         state: 'like',
-        article,
         liked,
       });
     } catch (error) {
