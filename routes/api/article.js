@@ -20,7 +20,6 @@ router.get('/admin', [auth, checkAdmin], article.getArticles);
 router.get('/:article_id', article.getOneArticle);
 router.put(
   '/:article_id',
-  upload.array('postPhotos', 4),
   [auth, validateText],
   article.updateArticle
 );
