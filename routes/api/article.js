@@ -4,7 +4,7 @@ import auth from '../../middlewares/auth';
 import { validateText } from '../../middlewares/validateText';
 import { checkAdmin } from '../../middlewares/isAdmin';
 import { checkUserFavoriteArticle } from '../../middlewares/checkUser';
-import upload from '../../helpers/fileUpoadConfig/multer';
+// import upload from '../../helpers/fileUpoadConfig/multer';
 
 const article = new Article();
 
@@ -12,7 +12,6 @@ const router = express.Router();
 
 router.post(
   '/',
-  upload.array('postPhotos', 4),
   [auth, validateText],
   article.createArticle
 );
@@ -21,7 +20,6 @@ router.get('/admin', [auth, checkAdmin], article.getArticles);
 router.get('/:article_id', article.getOneArticle);
 router.put(
   '/:article_id',
-  upload.array('postPhotos', 4),
   [auth, validateText],
   article.updateArticle
 );
