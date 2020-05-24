@@ -176,21 +176,20 @@ class UserController {
     const {username }= req.user;
     const where = { username };
     const newAvatar = { avatar };
-
     const user1 = await User.findOne(where);
-
     if (user1){
-      const user = await User.findOneAndUpdate(where, newAvatar);
-      res.status(201).send({
+       await User.updateOne(where, newAvatar);
+       const user = await User.findOne(where);
+       res.status(201).json({
         status: 201,
         data: user,
         message: "Image updated"
       })
     }
-    res.status(404).send({
+   else{res.status(404).json({
       status: 404,
       message: "User does not exist"
-    })
+    })}
   }
 
 }
