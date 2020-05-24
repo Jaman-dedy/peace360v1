@@ -186,7 +186,7 @@ class UserController {
         message: "Image updated"
       })
     }
-   else{res.status(404).json({
+   else {res.status(404).json({
       status: 404,
       message: "User does not exist"
     })}
