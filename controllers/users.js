@@ -170,5 +170,28 @@ class UserController {
       res.status(500).json({ status: 500, error: error.message });
     }
   }
+
+  async updateUserImage (req, res){
+    const {avatar} = req.body;
+    const {username }= req.user;
+    const where = { username };
+    const newAvatar = { avatar };
+
+    const user1 = await User.findOne(where);
+
+    if (user1){
+      const user = await User.findOneAndUpdate(where, newAvatar);
+      res.status(201).send({
+        status: 201,
+        data: user,
+        message: "Image updated"
+      })
+    }
+    res.status(404).send({
+      status: 404,
+      message: "User does not exist"
+    })
+  }
+
 }
 export default UserController;
