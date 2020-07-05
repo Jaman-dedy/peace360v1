@@ -2,34 +2,14 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const FollowerSchema = new Schema({
-  followedUser: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: 'users',
-      },
-      username: {
-        type: String,
-      },
-      avatar: {
-        type: String,
-      },
-    },
-  ],
-  followedBy: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: 'users',
-      },
-      username: {
-        type: String,
-      },
-      avatar: {
-        type: String,
-      },
-    },
-  ],
+  following: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  follower: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  }
 });
 
 export default mongoose.model('follower', FollowerSchema);

@@ -1,7 +1,5 @@
 import { validationResult } from 'express-validator';
 import Profile from '../models/Profile';
-import Article from '../models/Article';
-import User from '../models/User';
 
 class ProfileController {
   async currentUserProfile(req, res) {
