@@ -1,76 +1,113 @@
-import User from '../models/User';
-import Followers from '../models/Followers';
+import User from "../models/User";
+import Followers from "../models/Followers";
 
 class FollowerController {
   async followUser(req, res) {
-
     try {
-      const followingUser = await User.findById(req.params.userId);
-      const followings = await Followers.find({});
-      const followers = new Followers({
-        following: req.params.userId,
-        follower: req.user.id
-      });
+      const { userId } = req.params;
+      const FollowerId = req.user.id;
+
+      const checkUser = await User.findById(userId);
+
+      if (checkUser.id === FollowerId) {
+        return res.status(403).json({
+          error: "You cannot follow yourself",
+        });
+      }
       let redundant = [];
-      const isFollowing =
-        followings && followings.map(user => {
-          if (user.follower.toString() === req.user.id.toString() && user.following.toString() === req.params.userId) {
-            redundant.push(user)
+      const followings = await Followers.find({});
+
+      followings &&
+        followings.map((user) => {
+          if (
+            user.follower.toString() === req.user.id.toString() &&
+            user.following.toString() === req.params.userId
+          ) {
+            redundant.push(user);
           }
         });
       if (redundant.length) {
-        if (redundant[0].follower.toString() === req.user.id) {
-          try {
-            await Followers.findOneAndDelete({
-              follower: req.user.id,
-              following: req.params.userId
-            });
-          } catch (error) {
-            throw error
-          }
-          return res.status(200).json({
-            status: 200,
-            msg: `You've successfully unfollow ${followingUser.username}`,
-            user: followingUser,
-            state: 'unfollow'
-          })
-        }
+        return res.status(403).json({
+          error: `you are already following ${checkUser.username}`,
+        });
       }
 
-      await followers.save();
+      const newFollowing = {
+        follower: FollowerId,
+        following: checkUser.id,
+      };
+      const newSavedFollow = await Followers.create(newFollowing);
 
-      return res.status(201).json({
-        status: 201,
-        msg: `Thanks for following ${followingUser.username}`,
-        user: followingUser,
-        state: 'follow',
+      return res.status(200).json({
+        status: 200,
+        message: `you are now following ${checkUser.username}`,
+        data: newSavedFollow,
       });
-
     } catch (error) {
-      return res.status(500).json({
-        status: 500,
-        error: error.message,
-      });
+      console.log(error);
     }
   }
+
+  async unFollowUser(req, res) {
+    const { userId } = req.params;
+    const FollowerId = req.user.id;
+    const checkUser = await User.findById(userId);
+
+    let redundant = [];
+    const followings = await Followers.find({});
+
+    followings &&
+      followings.map((user) => {
+        if (
+          user.follower.toString() === req.user.id.toString() &&
+          user.following.toString() === req.params.userId
+        ) {
+          redundant.push(user);
+        }
+      });
+    if (redundant.length) {
+      if (redundant[0].follower.toString() === req.user.id) {
+        try {
+          await Followers.findOneAndDelete({
+            follower: req.user.id,
+            following: req.params.userId,
+          });
+          return res.status(200).json({
+            status: 200,
+            msg: `You've successfully unfollowed ${checkUser.username}`,
+            state: "unfollow",
+          });
+        } catch (error) {
+          throw error;
+        }
+      }
+    }
+    return res.status(400).json({
+      message: `you are not following ${checkUser.username}`,
+    });
+  }
+
   async getFollowers(req, res) {
     try {
-      const followers = await Followers.find().populate('following', ['avatar', 'username']).populate('follower', ['avatar', 'username']);
+      const followers = await Followers.find()
+        .populate("following", ["avatar", "username"])
+        .populate("follower", ["avatar", "username"]);
 
-      const myFollowers = followers.filter(myFollower => {
-        return myFollower.following._id.toString() === req.user.id
-      })
+      const myFollowers = followers.filter((myFollower) => {
+        return myFollower.following._id.toString() === req.user.id;
+      });
       if (!myFollowers.length) {
         return res.status(404).json({
           status: 404,
-          msg: 'Oops, you do not have any follower currently'
-        })
+          msg: "Oops, you do not have any follower currently",
+        });
       }
       return res.status(200).json({
         status: 200,
         myFollowers,
       });
     } catch (error) {
+      console.log("error", error);
       res.status(500).json({
         status: 500,
         error: error.message,
@@ -79,16 +116,18 @@ class FollowerController {
   }
   async getFollowings(req, res) {
     try {
-      const followings = await Followers.find().populate('following', ['avatar', 'username']).populate('follower', ['avatar', 'username']);
+      const followings = await Followers.find()
+        .populate("following", ["avatar", "username"])
+        .populate("follower", ["avatar", "username"]);
 
-      const myFollowings = followings.filter(myFollowing => {
-        return myFollowing.follower._id.toString() === req.user.id
-      })
+      const myFollowings = followings.filter((myFollowing) => {
+        return myFollowing.follower._id.toString() === req.user.id;
+      });
       if (!myFollowings.length) {
         return res.status(404).json({
           status: 404,
-          msg: 'Oops, you do not currently followed'
-        })
+          msg: "Oops, you do not currently followed",
+        });
       }
       return res.status(200).json({
         status: 200,

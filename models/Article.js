@@ -1,10 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const ArticleSchema = new Schema({
   categoryId: {
     type: Schema.Types.ObjectId,
-    ref: 'categories',
+    ref: "categories",
     required: true,
   },
   title: {
@@ -41,11 +41,11 @@ const ArticleSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'users',
+        ref: "users",
       },
       articleId: {
         type: Schema.Types.ObjectId,
-        ref: 'articles',
+        ref: "articles",
       },
       name: {
         type: String,
@@ -59,7 +59,7 @@ const ArticleSchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'users',
+        ref: "users",
       },
       name: {
         type: String,
@@ -72,11 +72,14 @@ const ArticleSchema = new Schema({
       },
     },
   ],
+  readTime: {
+    type: String,
+  },
   comments: [
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'users',
+        ref: "users",
       },
       text: {
         type: String,
@@ -103,5 +106,5 @@ const ArticleSchema = new Schema({
   },
 });
 
-ArticleSchema.index({ '$**': 'text' });
-export default mongoose.model('Article', ArticleSchema);
+ArticleSchema.index({ "$**": "text" });
+export default mongoose.model("Article", ArticleSchema);
