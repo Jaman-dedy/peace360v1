@@ -4,104 +4,96 @@ const Schema = mongoose.Schema;
 const ProfileSchema = new mongoose.Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
   },
   company: {
-    type: String
+    type: String,
   },
   website: {
-    type: String
+    type: String,
   },
   location: {
-    type: String
+    type: String,
   },
   skills: {
     type: [String],
-    required: true
   },
   bio: {
-    type: String
+    type: String,
   },
   experience: [
     {
       title: {
         type: String,
-        required: true
       },
       company: {
         type: String,
-        required: true
       },
       location: {
-        type: String
+        type: String,
       },
       from: {
         type: Date,
-        required: true
       },
       to: {
-        type: Date
+        type: Date,
       },
       current: {
         type: Boolean,
-        default: false
+        default: false,
       },
       description: {
-        type: String
-      }
-    }
+        type: String,
+      },
+    },
   ],
   education: [
     {
       school: {
         type: String,
-        required: true
       },
       degree: {
         type: String,
-        required: true
       },
       fieldofstudy: {
         type: String,
-        required: true
       },
       from: {
         type: Date,
-        required: true
       },
       to: {
-        type: Date
+        type: Date,
       },
       current: {
         type: Boolean,
-        default: false
+        default: false,
       },
       description: {
-        type: String
-      }
-    }
+        type: String,
+      },
+    },
   ],
   social: {
     youtube: {
-      type: String
+      type: String,
     },
     twitter: {
-      type: String
+      type: String,
     },
     facebook: {
-      type: String
+      type: String,
     },
     linkedin: {
-      type: String
+      type: String,
     },
     instagram: {
-      type: String
-    }
+      type: String,
+    },
   },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 export default mongoose.model("Profile", ProfileSchema);

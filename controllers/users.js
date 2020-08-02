@@ -1,11 +1,11 @@
-import { validationResult } from 'express-validator';
-import gravatar from 'gravatar';
-import bcrypt from 'bcryptjs';
-import generateToken from '../helpers/generateToken';
-import User from '../models/User';
-import sendEmail from '../helpers/sendEmail/callMailer';
-import jwt from 'jsonwebtoken';
-import config from 'config';
+import { validationResult } from "express-validator";
+import gravatar from "gravatar";
+import bcrypt from "bcryptjs";
+import generateToken from "../helpers/generateToken";
+import User from "../models/User";
+import sendEmail from "../helpers/sendEmail/callMailer";
+import jwt from "jsonwebtoken";
+import config from "config";
 
 class UserController {
   async signup(req, res) {
@@ -16,23 +16,27 @@ class UserController {
     const {
       username,
       email,
-      password
+      password,
+      bio,
       // country,
       // organisation,
       // category,
       // isAdmin
     } = req.body;
     try {
-      const avatar = gravatar.url(email, {
-        s: 200,
-        r: 'pg',
-        d: 'mm'
-      });
+      // const avatar = gravatar.url(email, {
+      //   s: 200,
+      //   r: "pg",
+      //   d: "mm",
+      // });
+      const avatar =
+        "https://res.cloudinary.com/raymondg/image/upload/v1596383959/profile_eim8md.png";
       let user = new User({
         username,
         email,
         avatar,
-        password
+        password,
+        bio,
         // country,
         // organisation,
         // category,
@@ -46,10 +50,10 @@ class UserController {
         user: {
           id: user.id,
           username: user.username,
-          avatar: user.avatar
-        }
+          avatar: user.avatar,
+        },
       };
-      const registeredUser = await User.findById(user.id).select('-password');
+      const registeredUser = await User.findById(user.id).select("-password");
       const token = generateToken(payload);
       res.status(201).json({ status: 201, registeredUser, token });
     } catch (err) {
@@ -68,8 +72,8 @@ class UserController {
       user: {
         id: user.id,
         username: user.username,
-        avatar: user.avatar
-      }
+        avatar: user.avatar,
+      },
     };
 
     const token = generateToken(payload);
@@ -83,21 +87,21 @@ class UserController {
       if (!user) {
         return res.status(404).json({
           status: 404,
-          msg: 'No user found with that email address'
+          msg: "No user found with that email address",
         });
       }
       const payload = {
-        email: user.email
+        email: user.email,
       };
       const token = generateToken(payload);
       req.body.token = token;
-      req.body.template = 'resetPassword';
-      const response = await sendEmail(user.email, token, 'resetPassword');
+      req.body.template = "resetPassword";
+      const response = await sendEmail(user.email, token, "resetPassword");
       res.status(200).send({ status: 200, response });
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error.message
+        error: error.message,
       });
     }
   }
@@ -105,12 +109,12 @@ class UserController {
     const salt = await bcrypt.genSalt(10);
     const password = await bcrypt.hash(req.body.password, salt);
     const { token } = req.body;
-    const decoded = jwt.decode(token, config.get('jwtSecret'));
+    const decoded = jwt.decode(token, config.get("jwtSecret"));
     try {
       if (!decoded) {
         return res.status(401).json({
           status: 401,
-          error: 'Invalid token'
+          error: "Invalid token",
         });
       }
       const updatePwd = await User.findOneAndUpdate(
@@ -120,40 +124,40 @@ class UserController {
       if (updatePwd) {
         return res.status(200).json({
           status: 200,
-          message: "Congratulations! You've successfully reset your password"
+          message: "Congratulations! You've successfully reset your password",
         });
       }
     } catch (error) {
       res.status(500).json({
         status: 500,
-        error: error.message
+        error: error.message,
       });
     }
   }
   async getAuthenticatedUser(req, res) {
     try {
-      const user = await User.findById(req.user.id).select('-password');
+      const user = await User.findById(req.user.id).select("-password");
       res.status(200).json({ status: 200, user });
     } catch (error) {
-      res.status(500).json({ status: 500, msg: 'server error' });
+      res.status(500).json({ status: 500, msg: "server error" });
     }
   }
   async loginViaSocialMedia(req, res) {
     const user = {
-      username: req.user.username
+      username: req.user.username,
     };
     try {
       let newUser = await User.findOne({ username: req.user.username });
       if (newUser) {
         newUser = await User.findOneAndUpdate(
           {
-            username: req.user.username
+            username: req.user.username,
           },
           { user }
         );
         const payload = {
           id: newUser.id,
-          username: newUser.username
+          username: newUser.username,
         };
         const token = generateToken(payload);
         res.status(200).json({ status: 200, newUser, token });
@@ -162,7 +166,7 @@ class UserController {
       await newUser.save();
       const payload = {
         id: newUser.id,
-        username: newUser.username
+        username: newUser.username,
       };
       const token = generateToken(payload);
       res.status(201).json({ status: 201, newUser, token });
@@ -171,26 +175,26 @@ class UserController {
     }
   }
 
-  async updateUserImage (req, res){
-    const {avatar} = req.body;
-    const {username }= req.user;
+  async updateUserImage(req, res) {
+    const { avatar } = req.body;
+    const { username } = req.user;
     const where = { username };
     const newAvatar = { avatar };
     const user1 = await User.findOne(where);
-    if (user1){
-       await User.updateOne(where, newAvatar);
-       const user = await User.findOne(where);
-       res.status(201).json({
+    if (user1) {
+      await User.updateOne(where, newAvatar);
+      const user = await User.findOne(where);
+      res.status(201).json({
         status: 201,
         data: user,
-        message: "Image updated"
-      })
+        message: "Image updated",
+      });
+    } else {
+      res.status(404).json({
+        status: 404,
+        message: "User does not exist",
+      });
     }
-   else{res.status(404).json({
-      status: 404,
-      message: "User does not exist"
-    })}
   }
-
 }
 export default UserController;

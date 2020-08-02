@@ -1,9 +1,10 @@
-import { validationResult } from 'express-validator';
-import fs, { read } from 'fs';
-import Article from '../models/Article';
-import cloudinary from '../helpers/fileUpoadConfig/cloudinary';
-import User from '../models/User';
-import Category from '../models/Category';
+import { validationResult } from "express-validator";
+import fs, { read } from "fs";
+import Article from "../models/Article";
+import cloudinary from "../helpers/fileUpoadConfig/cloudinary";
+import User from "../models/User";
+import Category from "../models/Category";
+import readTime from "../helpers/readTime";
 
 class ArticleController {
   async createArticle(req, res) {
@@ -14,8 +15,9 @@ class ArticleController {
       });
     }
     try {
-      const user = await User.findById(req.user.id).select('-password');
-    
+      const { text, title, description } = req.body;
+      const user = await User.findById(req.user.id).select("-password");
+      const readTimeOfArticle = readTime(text, title, description);
       const newArticle = new Article({
         text: req.body.text,
         categoryId: req.body.categoryId,
@@ -23,6 +25,7 @@ class ArticleController {
         subTitle: req.body.subTitle,
         tags: req.body.tags,
         coverPhoto: req.body.coverPhoto,
+        readTime: readTimeOfArticle,
         user: {
           id: user._id,
           username: user.username,
@@ -35,10 +38,10 @@ class ArticleController {
       res.status(201).json({
         status: 201,
         data: article,
-        message: 'You successfully created an article',
+        message: "You successfully created an article",
       });
     } catch (err) {
-      console.log('err', err);
+      console.log("err", err);
       res.status(500).json({
         status: 500,
         error: err,
@@ -59,7 +62,7 @@ class ArticleController {
       res.status(200).json({
         status: 200,
         displayed,
-        message: 'You successfully fetched the articles',
+        message: "You successfully fetched the articles",
       });
     } catch (error) {
       res.status(500).json({
@@ -91,23 +94,24 @@ class ArticleController {
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found',
+          error: "Item not found",
         });
       }
+
       res.status(200).json({
         status: 200,
         article,
       });
     } catch (err) {
-      if (err.kind === 'ObjectId') {
+      if (err.kind === "ObjectId") {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found',
+          error: "Item not found",
         });
       }
       return res.status(500).json({
         status: 500,
-        error: 'Server error',
+        error: "Server error",
       });
     }
   }
@@ -123,13 +127,13 @@ class ArticleController {
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found',
+          error: "Item not found",
         });
       }
       if (article.user.toString() !== req.user.id) {
         return res.status(401).json({
           status: 401,
-          error: 'Action denied',
+          error: "Action denied",
         });
       }
       const updatedArticle = {
@@ -153,30 +157,30 @@ class ArticleController {
       if (article.user.toString() !== req.user.id) {
         return res.status(401).json({
           status: 401,
-          error: 'Action denied',
+          error: "Action denied",
         });
       }
       if (!article) {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found',
+          error: "Item not found",
         });
       }
       await article.remove();
       return res.status(200).json({
         status: 200,
-        error: 'Article removed',
+        error: "Article removed",
       });
     } catch (err) {
-      if (err.kind === 'ObjectId') {
+      if (err.kind === "ObjectId") {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found',
+          error: "Item not found",
         });
       }
       return res.status(500).json({
         status: 500,
-        error: 'Server error',
+        error: "Server error",
       });
     }
   }
@@ -197,8 +201,8 @@ class ArticleController {
         const disliked = article.likes;
         return res.status(200).json({
           status: 200,
-          message: 'Article disliked',
-          state: 'dislike',
+          message: "Article disliked",
+          state: "dislike",
         });
       }
       const newLike = {
@@ -212,15 +216,15 @@ class ArticleController {
       const liked = article.likes;
       return res.status(200).json({
         status: 200,
-        message: 'Article liked',
-        state: 'like',
+        message: "Article liked",
+        state: "like",
         liked,
       });
     } catch (error) {
-      if (error.kind === 'ObjectId') {
+      if (error.kind === "ObjectId") {
         return res.status(404).json({
           status: 404,
-          error: 'Item not found',
+          error: "Item not found",
         });
       }
       return res.status(500).json({

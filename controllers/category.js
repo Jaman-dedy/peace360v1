@@ -1,7 +1,7 @@
-import Category from '../models/Category';
+import Category from "../models/Category";
 
-import statusCode from '../config/statusCode';
-import { updateCategoryHelper } from '../helpers/categoryHelper';
+import statusCode from "../config/statusCode";
+import { updateCategoryHelper } from "../helpers/categoryHelper";
 
 export default class CategoryController {
   static async createCategory(req, res) {
@@ -11,40 +11,40 @@ export default class CategoryController {
     res.status(statusCode.CREATED).json({
       status: statusCode.CREATED,
       data: saveCategory,
-      message: 'Category successfully created'
+      message: "Category successfully created",
     });
   }
   static async editCategory(req, res) {
     const updateCategory = await updateCategoryHelper(req);
     if (updateCategory) {
       const findNewCategory = await Category.findOne({
-        _id: updateCategory._id
+        _id: updateCategory._id,
       });
       res.status(statusCode.OK).json({
         status: statusCode.OK,
-        message: 'category updated successfully',
-        data: findNewCategory
+        message: "category updated successfully",
+        data: findNewCategory,
       });
     }
     res.status(statusCode.SERVER_ERROR).json({
       status: statusCode.SERVER_ERROR,
-      message: error.message
+      message: error.message,
     });
   }
   static async deleteCategory(req, res) {
     const { categoryTitle } = req.params;
     const deleteCat = await Category.findOneAndRemove({
-      categoryTitle
+      categoryTitle,
     });
     deleteCat
       ? res.status(statusCode.OK).json({
           status: statusCode.OK,
-          message: 'category deleted successfully',
-          data: deleteCat
+          message: "category deleted successfully",
+          data: deleteCat,
         })
       : res.status(statusCode.NOT_FOUND).json({
           status: statusCode.NOT_FOUND,
-          errors: { message: "Category doesn't exist" }
+          errors: { message: "Category doesn't exist" },
         });
   }
   static async getAllCategory(req, res) {
@@ -57,12 +57,12 @@ export default class CategoryController {
     const allCategories = await Category.aggregate([
       {
         $lookup: {
-          from: 'articles',
-          localField: '_id',
-          foreignField: 'categoryId',
-          as: 'articles'
-        }
-      }
+          from: "articles",
+          localField: "_id",
+          foreignField: "categoryId",
+          as: "articles",
+        },
+      },
     ]);
     const pageNumber = Math.ceil(allCategories.length / 3);
     if (page > 1) {
@@ -79,11 +79,11 @@ export default class CategoryController {
         previousPage,
         currentPage: page,
         nextPage,
-        limit: 3
+        limit: 3,
       },
       status: statusCode.OK,
-      message: 'Categories are successfully fetched',
-      categories
+      message: "Categories are successfully fetched",
+      categories,
     });
   }
 
@@ -93,13 +93,13 @@ export default class CategoryController {
     if (allCategories.length === 0) {
       res.status(statusCode.NOT_FOUND).json({
         status: statusCode.NOT_FOUND,
-        message: 'No categories so far'
+        message: "No categories so far",
       });
     }
-    res.status(statusCode.OK).json({
+    return res.status(statusCode.OK).json({
       status: statusCode.OK,
-      message: 'Categories are successfully fetched',
-      data: allCategories
+      message: "Categories are successfully fetched",
+      data: allCategories,
     });
   }
   static async getOneCategory(req, res) {
@@ -108,12 +108,12 @@ export default class CategoryController {
     category
       ? res.status(statusCode.OK).json({
           status: statusCode.OK,
-          message: 'Category is successfully fetched',
-          data: category
+          message: "Category is successfully fetched",
+          data: category,
         })
       : res.status(statusCode.NOT_FOUND).json({
           status: statusCode.NOT_FOUND,
-          message: 'Category does not exist'
+          message: "Category does not exist",
         });
   }
 }
