@@ -36,26 +36,24 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  social: {
-    youtube: {
-      type: String,
-      default: "",
-    },
-    twitter: {
-      type: String,
-      default: "",
-    },
-    facebook: {
-      type: String,
-    },
-    linkedin: {
-      type: String,
-      default: "",
-    },
-    instagram: {
-      type: String,
-      default: "",
-    },
+  youtube: {
+    type: String,
+    default: "",
+  },
+  twitter: {
+    type: String,
+    default: "",
+  },
+  facebook: {
+    type: String,
+  },
+  linkedin: {
+    type: String,
+    default: "",
+  },
+  instagram: {
+    type: String,
+    default: "",
   },
   isAdmin: {
     type: Boolean,
