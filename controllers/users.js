@@ -13,22 +13,8 @@ class UserController {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const {
-      username,
-      email,
-      password,
-      bio,
-      // country,
-      // organisation,
-      // category,
-      // isAdmin
-    } = req.body;
+    const { username, email, password, bio } = req.body;
     try {
-      // const avatar = gravatar.url(email, {
-      //   s: 200,
-      //   r: "pg",
-      //   d: "mm",
-      // });
       const avatar =
         "https://res.cloudinary.com/raymondg/image/upload/v1596383959/profile_eim8md.png";
       let user = new User({
@@ -37,10 +23,6 @@ class UserController {
         avatar,
         password,
         bio,
-        // country,
-        // organisation,
-        // category,
-        // isAdmin
       });
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
